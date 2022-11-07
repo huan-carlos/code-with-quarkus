@@ -42,8 +42,18 @@ public class CategoriaResource {
     @Transactional
     @Path("/{id}")
     @PUT
-    public void update(Categoria categoria){
-        var em = JpaOperations.INSTANCE.getEntityManager();
-        em.merge(categoria);
+    public void update(@PathParam("id") Long id, Categoria categoria){
+        /*var categoriaLocalizada = (Categoria)Categoria.findById(id);
+        categoriaLocalizada.descricao = categoria.descricao;
+        categoriaLocalizada.sigla = categoria.sigla;
+        categoriaLocalizada.persist();*/
+
+        //implement Lock Optimistic
+        try {
+            var em = JpaOperations.INSTANCE.getEntityManager();
+            em.merge(categoria);
+        } catch (Exception e) {
+            throw new WebApplicationException("Registro excluido ou alterado por outro Usuário!");
+        }
     }
 }
