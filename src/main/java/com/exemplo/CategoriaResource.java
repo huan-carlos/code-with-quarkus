@@ -2,7 +2,9 @@ package com.exemplo;
 
 import com.exemplo.model.Categoria;
 import io.quarkus.hibernate.orm.panache.runtime.JpaOperations;
+import org.hibernate.annotations.OptimisticLock;
 
+import javax.persistence.OptimisticLockException;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -52,7 +54,7 @@ public class CategoriaResource {
         try {
             var em = JpaOperations.INSTANCE.getEntityManager();
             em.merge(categoria);
-        } catch (Exception e) {
+        } catch (OptimisticLockException e) {
             throw new WebApplicationException("Registro excluido ou alterado por outro Usuário!");
         }
     }
